@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zzu.hospitalchargemanagementsystem.mapper.StatisticsMapper">
+
+
+    <!-- 查询最近时间的患者人数-->
+    <select id="selectPatientNumInDate" resultType="java.lang.Integer">
+        select count(id) as count from patient where id in (select patient from consult where date between #{from} and #{to})
+    </select>
+
+    <!--查询最近时间的患者人次-->
+    <select id="selectPatientCountInDate" resultType="java.lang.Integer">
+        select count(patient) from consult where date between #{from} and #{to}
+    </select>
+
+    <!--查询最近时间的患者人数 With 状态-->
+    <select id="selectPatientNumInDateAndState" resultType="java.lang.Integer">
+        select count(id) as count  from patient where id in (select patient from consult where state=#{state} and date between #{from} and #{to})
+    </select>
+
+    <!--查询最近时间的患者人次 With 状态-->
+    <select id="selectPatientCountInDateAndState" resultType="java.lang.Integer">
+        select count(patient) from consult where state=#{state} and date between #{from} and #{to}
+    </select>
+
+    <!--查询最近时间的治疗人数-->
+    <select id="selectTreatmentPatientNumInDate" resultType="java.lang.Integer">
+        select count(id) as count from patient where id in (select consult.patient from consult inner join treatment on treatment.consult = consult.id where treatment.date between #{from} and #{to})
+    </select>
+
+    <!--查询最近时间的治疗人次-->
+    <select id="selectTreatmentPatientCountInDate" resultType="java.lang.Integer">
+        select count(1) as count from consult inner join treatment on treatment.consult = consult.id where treatment.date between #{from} and #{to}
+    </select>
+
+    <!--查询最近时间的治疗费用-->
+    <select id="selectTreatmentCostInDate" resultType="java.lang.Float">
+        select ifnull(sum(cost), 0) from treatment where treatment.date between #{from} and #{to}
+    </select>
+
+    <!--查询每个医生最近时间治疗的患者人数-->
+    <select id="selectTreatmentPatientNumInDateWithDoctor" resultType="java.lang.Integer">
+        select count(id) as count from patient where id in (select consult.patient from consult inner join treatment on treatment.consult = consult.id where treatment.doctor = #{doctor} and treatment.date between #{from} and #{to})
+    </select>
+
+    <!--查询每个医生最近时间治疗的患者人次-->
+    <select id="selectTreatmentPatientCountInDateWithDoctor" resultType="java.lang.Integer">
+        select count(consult.patient) as count from consult inner join treatment on treatment.consult = consult.id where treatment.doctor = #{doctor} and treatment.date between #{from} and #{to}
+    </select>
+
+    <!--查询最近时间每个医生的治疗费用-->
+    <select id="selectTreatmentCostInDateWithDoctor" resultType="java.lang.Float">
+        select ifnull(sum(cost), 0) from treatment where treatment.doctor = #{doctor} and treatment.date between #{from} and #{to}
+    </select>
+
+
+    <!--最近一个医生门诊的一个病种的人数-->
+    <select id="selectConsultDiseasesNumInDatePerDoctor" resultType="java.lang.Integer">
+        select count(distinct patient) from consult where doctor = #{doctor} and diseases = #{diseases} and date between #{from} and #{to}
+    </select>
+
+    <!--最近一个医生门诊的一个病种的人次-->
+    <select id="selectConsultDiseasesCountInDatePerDoctor" resultType="java.lang.Integer">
+        select count(1) from consult where doctor = #{doctor} and diseases = #{diseases} and date between #{from} and #{to}
+    </select>
+
+    <!--最近一个医生门诊的一个治疗的病人-->
+    <select id="selectTreatmentDiseasesCountInDatePerDoctor" resultType="java.lang.Integer">
+        select count(1) from treatment where consult in (select id from consult where doctor = #{doctor} and diseases = #{diseases} and date between #{from} and #{to})
+    </select>
+
+    <!--最近一个医生治疗的一个病种的收费-->
+    <select id="selectCostDiseasesInDatePerDoctor" resultType="java.lang.Float">
+        select ifnull(sum(cost), 0) from treatment where consult in (select id from consult where doctor = #{doctor} and diseases = #{diseases} and date between #{from} and #{to})
+    </select>
+</mapper>

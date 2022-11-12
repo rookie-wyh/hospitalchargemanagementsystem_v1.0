@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <style>
+        table th{
+            text-align: center;
+            width: 200px;
+        }
+        table td{
+            text-align: center;
+
+        }
+        .even{
+            background-color: #f2f2f2;
+        }
+        table tr{
+            height: 33px;
+        }
+        .tableheader{
+            height: 35px;
+            background-color: #d2d2d2;
+        }
+
+    </style>
+</head>
+<body style="width: 100%">
+<a href="/toaddpatient"><button type="button" class="layui-btn">+新增</button></a>
+<div style="display: none" id="add"></div>
+<div style="display: none" id="update"></div>
+<div class="search" >
+    <p>按 手机号/姓名 搜索</p>
+    <form class="layui-form" action="/patient/search" method="post">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">手机号</label>
+                <div class="layui-input-inline"  style="width: 300px">
+                    <input type="text" name="id" autocomplete="off" class="layui-input" th:value="${condition_id}">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">姓名</label>
+                <div class="layui-input-inline" style="width: 300px">
+                    <input type="text" name="name" autocomplete="off" class="layui-input" th:value="${condition_name}">
+                </div>
+            </div>
+            <div class="layui-inline"  style="width: 100px">
+                <div class="layui-input-inline">
+                    <button type="submit" class="layui-btn">搜索</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+<div class="search">
+    <p>按 病种 搜索</p>
+    <form class="layui-form" action="/patient/searchdiseases" method="post">
+
+        <!--<div class="layui-inline">-->
+            <!--<label class="layui-form-label">病种</label>-->
+            <!--<div class="layui-input-inline" style="width: 300px">-->
+                <!--<select name="diseases">-->
+                    <!--<option th:attr="selected = ( ${condition_diseases} ? 'true' : 'false')">&#45;&#45;请选择&#45;&#45;</option>-->
+                    <!--<option value="劲椎病" th:attr="selected = ( (${condition_diseases} == '劲椎病')? 'true' : 'false')">劲椎病</option>-->
+                    <!--<option value="腰间盘突出" th:attr="selected = ( (${condition_diseases} == '腰间盘突出')? 'true' : 'false')">腰间盘突出</option>-->
+                <!--</select>-->
+            <!--</div>-->
+        <!--</div>-->
+
+        <div class="layui-inline">
+            <label class="layui-form-label">病种</label>
+            <div class="layui-input-inline" style="width: 300px">
+                <select name="diseasesSelect">
+                    <span th:each="diseasesName : ${diseases_list}"><option th:value="${diseasesName}" th:text="${diseasesName}" th:attr="selected = ( (${condition_diseases_select} == ${diseasesName})? 'true' : 'false')"></option></span>
+                </select>
+            </div>
+            <div class="layui-input-inline" style="width: 250px">
+                <input type="text" name="diseases" th:value="${condition_diseases}" placeholder="选择选项或在此处输入" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+
+        <div class="layui-inline"  style="width: 100px">
+            <div class="layui-input-inline">
+                <button type="submit" class="layui-btn">搜索</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="searched" th:if="${searched_patients}" >
+    <p>搜索结果</p>
+    <div class="table" style="width: 75%; margin: 0 auto">
+        <table >
+            <tr class="tableheader">
+                <th>序号</th>
+                <th>手机号</th>
+                <th>姓名</th>
+                <th>性别</th>
+                <th>年龄</th>
+                <th style="width: 300px">备注</th>
+                <th style="width: 300px">操作</th>
+            </tr>
+            <tr th:each="patient, iterStat : ${searched_patients}" th:class="${iterStat.odd}? 'odd':'even'">
+                <td th:text="${iterStat.count}" th:if="${patient}"></td>
+                <td th:text="${patient.id}"  th:if="${patient}"></td>
+                <td th:text="${patient.name}"  th:if="${patient}"></td>
+                <td th:text="${patient.gender}" th:if="${patient}"></td>
+                <td th:text="${patient.age}" th:if="${patient}"></td>
+                <td th:text="${patient.remark.length() > 10 ? patient.remark.substring(0, 10) + '...' : patient.remark}" th:if="${patient}"></td>
+                <td  th:if="${patient}">
+                    <a th:href="'/consult/patient='+ ${patient.id} + '/page=1'">查看</a>&nbsp;&nbsp;&nbsp;
+                    <a href="#" th:onclick="update([[${patient.id}]]);">编辑</a>&nbsp;&nbsp;&nbsp;
+                    <a href="#" onclick="todel_1()">删除</a>
+                    <span style="display: none">
+                        <form method="post" th:action="'/patient/' + ${patient.id}" style="display: inline">
+                            <input type="hidden" value="delete" name="_method" />
+                            <input type="submit" value="删除" id="del_1" onclick="return del()">
+                        </form>
+                    </span>
+                </td>
+            </tr>
+        </table>
+        <div th:if="${searched_patients.isEmpty()}" style="text-align: center;"><span>没有搜索到数据</span></div>
+    </div>
+</div>
+
+<hr/>
+
+<div class="all">
+    <span>
+        全部患者数据
+    </span>
+    <div class="" th:if="${patients}" >
+        <div class="table" style="width: 75%; margin: 0 auto">
+        <table >
+            <tr class="tableheader">
+                <th>序号</th>
+                <th>手机号</th>
+                <th>姓名</th>
+                <th>性别</th>
+                <th>年龄</th>
+                <th style="width: 300px">备注</th>
+                <th style="width: 300px">操作</th>
+            </tr>
+            <tr th:each="patient, iterStat : ${patients}"  th:class="${iterStat.odd}? 'odd':'even'">
+                <td th:text="${(patientPageInfo.getPageNum() - 1) * patientPageInfo.getPageSize() + iterStat.count}" th:if="${patient}"></td>
+                <td th:text="${patient.id}" th:if="${patient}"></td>
+                <td th:text="${patient.name}" th:if="${patient}"></td>
+                <td th:text="${patient.gender}" th:if="${patient}"></td>
+                <td th:text="${patient.age}" th:if="${patient}"></td>
+                <td th:text="${patient.remark.length() > 10 ? patient.remark.substring(0, 10) + '...' : patient.remark}" th:if="${patient}"></td>
+                <td  th:if="${patient}">
+                    <a th:href="'/consult/patient='+ ${patient.id} + '/page=1'">查看</a>&nbsp;&nbsp;&nbsp;
+                    <!--th:onclick="'update(' + ${patient.id} + ')'"-->
+                    <a href="#" th:onclick="update([[${patient.id}]]);">编辑</a>&nbsp;&nbsp;&nbsp;
+                    <a href="#" onclick="todel_2()">删除</a>
+                    <span style="display: none">
+                        <form method="post" th:action="'/patient/' + ${patient.id}" style="display: inline">
+                            <input type="hidden" value="delete" name="_method" />
+                            <input type="submit" value="删除" id="del_2" onclick="return del()">
+                        </form>
+                    </span>
+                </td>
+            </tr>
+        </table>
+        <br/>
+        <div class="page" style="width: 100%; text-align: center">
+            <a href="/patient/1">首页</a>
+            <a th:href="'/patient/' + ${patientPageInfo.getPrePage()}" th:if="${patientPageInfo.getPageNum()} gt 1">上一页</a>
+            <span th:text="${patientPageInfo.getPageNum()} + '/' + ${patientPageInfo.getPages()}"></span>
+            <a th:href="'/patient/' + ${patientPageInfo.getNextPage}" th:if="${patientPageInfo.getPageNum()} lt ${patientPageInfo.getPages()}">下一页</a>
+            <a th:href="'/patient/' + ${patientPageInfo.getPages()}">末页</a>
+        </div>
+    </div>
+    </div>
+</div>
+
+<script src="/js/jquery-3.4.1.js"></script>
+<script src="/layui/layui.js"></script>
+<script>
+
+    function todel_1(){
+        $("#del_1").click()
+    }
+    function todel_2(){
+        $("#del_2").click()
+    }
+
+    function del() {
+        if(confirm("确认删除吗") == true){
+            if(confirm("重复确认删除") == true){
+                alert("删除成功");
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
+
+    function update(id) {
+        $("#update").load("/toupdatepatient/"+ id, function () {
+            layer.open({
+                type: 1,
+                title: "编辑",
+                move:false,//禁止点击标题拖动
+                skin: 'layui-layer-rim', //加上边框
+                area: ['580px', '500px'], //宽高
+                content: $("#update").html()
+            });
+        });
+    }
+
+    function add() {
+        //页面层
+        $("#add").load("/toaddpatient", function () {
+            layer.open({
+                type: 1,
+                title: "添加",
+                move:false,//禁止点击标题拖动
+                skin: 'layui-layer-rim', //加上边框
+                area: ['600px', '500px'], //宽高
+                content: $("#add").html()
+            });
+        });
+    }
+
+    //window.history.replaceState(null, null, window.location.href);
+    window.history.replaceState(null, null, "/patient");
+
+    // window.parent.location.reload();
+</script>
+</body>
+</html>

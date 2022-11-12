@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <style>
+
+    </style>
+</head>
+<body style="width: 100%">
+
+<!--<h1>添加</h1>-->
+<br/>
+<div style="padding: 5px 40px 40px 20px; width: 90%;">
+    <form class="layui-form" th:action="'/consult/' + ${consult.id}" method="post">
+        <input type="hidden" name="_method" value="put"/>
+        <input type="hidden" name="patient" th:value="${consult.patient}">
+        <div class="layui-form-item">
+            <label class="layui-form-label">患者姓名</label>
+            <div class="layui-input-block">
+                <input type="text" name="patientName" lay-verify="title" autocomplete="off" class="layui-input" th:value="${consult.patientObj.name}" readonly>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">医生姓名</label>
+            <div class="layui-input-block">
+                <input type="text" name="doctorName" lay-verify="title" autocomplete="off" class="layui-input" th:value="${consult.doctorObj.name}" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">病种</label>
+            <div class="layui-input-block">
+                <select name="diseasesSelect">
+                    <span th:each="diseasesName : ${diseases_list}"><option th:value="${diseasesName}" th:text="${diseasesName}"  th:attr="selected = ( (${consult.diseases} == ${diseasesName})? 'true' : 'false')"></option></span>
+                </select>
+            </div><br/>
+            <div class="layui-input-block">
+                <input type="text" name="diseases" placeholder="若没有选项 在此处输入" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <!--<div class="layui-form-item">-->
+            <!--<label class="layui-form-label">病种</label>-->
+            <!--<div class="layui-input-block">-->
+                <!--<select name="diseases">-->
+                    <!--<option value="未知" th:attr="selected = ( (${consult.diseases} == '未知')? 'true' : 'false')">&#45;&#45;请选择&#45;&#45;</option>-->
+                    <!--<option value="劲椎病"  th:attr="selected = ( (${consult.diseases} == '劲椎病')? 'true' : 'false')">劲椎病</option>-->
+                    <!--<option value="腰间盘突出"  th:attr="selected = ( (${consult.diseases} == '腰间盘突出')? 'true' : 'false')">腰间盘突出</option>-->
+                <!--</select>-->
+            <!--</div>-->
+        <!--</div>-->
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span style="color: red">*</span>状态</label>
+            <div class="layui-input-block">
+                <select name="state">
+                    <option value="门诊" th:attr="selected = ( (${consult.state} == '门诊')? 'true' : 'false')">门诊</option>
+                    <option value="住院" th:attr="selected = ( (${consult.state} == '住院')? 'true' : 'false')">住院</option>
+                    <option value="已出院" th:attr="selected = ( (${consult.state} == '已出院')? 'true' : 'false')">已出院</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">诊断结果</label>
+            <div class="layui-input-block">
+                <textarea placeholder="请输入内容"  name="result" class="layui-textarea" th:text="${consult.result}"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">治疗方案</label>
+            <div class="layui-input-block">
+                <textarea placeholder="请输入内容" name="scheme" class="layui-textarea readonly" th:text="${consult.scheme}"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item" style="display: none">
+            <label class="layui-form-label">初始费用</label>
+            <div class="layui-input-block">
+                <input type="text"  name="cost" autocomplete="off" placeholder="￥" class="layui-input" th:value="${consult.cost}">
+            </div>
+        </div>
+        <div class="layui-form-item" th:if="${consult.state} != '已出院'">
+            <label class="layui-form-label">余额</label>
+            <div class="layui-input-block">
+                <input type="text" name="title"  autocomplete="off" placeholder="￥" class="layui-input" th:value="${consult.balance}" readonly>
+            </div>
+    </div>
+        <div class="layui-form-item" th:if="${consult.state} == '已出院'">
+            <label class="layui-form-label">余额</label>
+            <div class="layui-input-block">
+                <span></span>
+                <input type="text"  autocomplete="off" placeholder="￥" class="layui-input" value="'已出院' 状态下不显示余额" readonly>
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-block" >
+                <textarea placeholder="请输入内容" name="remark" class="layui-textarea readonly" th:text="${consult.remark}"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">日期</label>
+            <div class="layui-input-block">
+                <input type="text" name="title" lay-verify="title" autocomplete="off" class="layui-input" th:value="${#dates.format(consult.date, 'yyyy-MM-dd HH:mm:ss')}" readonly>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script src="/js/jquery-3.4.1.js"></script>
+<script src="/layui/layui.js"></script>
+<script>
+
+
+
+</script>
+</body>
+</html>

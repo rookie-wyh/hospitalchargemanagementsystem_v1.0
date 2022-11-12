@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+</head>
+<body style="width: 100%;">
+<div style="width: 80%;">
+    <h2>修改个人信息</h2><br/>
+    <form class="layui-form" action="/profile" method="post">
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">手机号</label>
+            <div class="layui-input-block">
+                <input type="text" name="id" autocomplete="off" class="layui-input" th:value="${loginUser.id}" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">姓名</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" autocomplete="off" lay-verify="required|chineseName" class="layui-input" th:value="${loginUser.name}" required>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">职位</label>
+            <div class="layui-input-block">
+                <select name="post">
+                    <option value="医生" th:attr="selected = ( (${loginUser.post} == '医生')? 'true' : 'false')">医生</option>
+                    <option value="科室主任" th:attr="selected = ( (${loginUser.post} == '科室主任')? 'true' : 'false')">科室主任</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">性别</label>
+            <div class="layui-input-block">
+                <select name="gender">
+                    <option value="男" th:attr="selected = ( (${loginUser.gender} == '男')? 'true' : 'false')">男</option>
+                    <option value="女" th:attr="selected = ( (${loginUser.gender} == '女')? 'true' : 'false')">女</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="submit" class="layui-btn">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+
+<script src="/layui/layui.js"></script>
+<script>
+
+    layui.use(['form'], function () {
+        var form = layui.form,
+            layer = layui.layer;
+
+
+        form.verify({
+
+            chineseName: function (value) { //最小长度验证
+                var pattern = /[\u4e00-\u9fa5]/;//中文验证
+                var txt = pattern.test(value);
+
+                if (value.length < 2 || !txt) {
+                    return '姓名必须是中文，且至少2个字符';
+                }
+                if (value.length > 8) return "长度必须少于8个字符";
+            },
+        });
+
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <style>
+        html, body {width: 100%;height: 100%;overflow: hidden}
+        body {background: #1E9FFF;}
+        body:after {content:'';background-repeat:no-repeat;background-size:cover;-webkit-filter:blur(3px);-moz-filter:blur(3px);-o-filter:blur(3px);-ms-filter:blur(3px);filter:blur(3px);position:absolute;top:0;left:0;right:0;bottom:0;z-index:-1;}
+        .layui-container {width: 100%;height: 100%;overflow: hidden}
+        .admin-login-background {width:360px;height:300px;position:absolute;left:50%;top:30%;margin-left:-180px;margin-top:-100px;}
+        .logo-title {text-align:center;letter-spacing:2px;padding:14px 0;}
+        .logo-title h1 {color:#1E9FFF;font-size:25px;font-weight:bold;}
+        .login-form {background-color:#fff;border:1px solid #fff;border-radius:3px;padding:14px 20px;box-shadow:0 0 8px #eeeeee;}
+        .login-form .layui-form-item {position:relative;}
+        .login-form .layui-form-item label {position:absolute;left:1px;top:1px;width:38px;line-height:36px;text-align:center;color:#d2d2d2;}
+        .login-form .layui-form-item input {padding-left:36px;}
+        .captcha {width:60%;display:inline-block;}
+        .captcha-img {display:inline-block;width:34%;float:right;}
+        .captcha-img img {height:34px;border:1px solid #e6e6e6;height:36px;width:100%;}
+    </style>
+</head>
+<body>
+
+<div class="layui-container">
+    <div class="admin-login-background">
+        <div class="layui-form login-form">
+            <form class="layui-form" action="/register" method="post">
+                <div class="layui-form-item logo-title">
+                    <h1>注册</h1>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-icon layui-icon-username"></label>
+                    <input type="text" name="id" lay-verify="required|phone" placeholder="手机号" autocomplete="off" class="layui-input" required>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-icon layui-icon-password"></label>
+                    <input type="password" name="password" lay-verify="required|password" placeholder="密码" autocomplete="off" class="layui-input" required>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-icon layui-icon-password"></label>
+                    <input type="password" name="repassword" lay-verify="required|password" placeholder="密码(重复)" autocomplete="off" class="layui-input" required>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-icon layui-icon-username"></label>
+                    <input type="text" name="name" lay-verify="required|chineseName" placeholder="姓名" autocomplete="off" class="layui-input" required>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-icon">性别</label>
+                    <div class="layui-input-block">
+                        <select name="gender">
+                            <option value="男" selected>男</option>
+                            <option value="女">女</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-icon">职位</label>
+                    <div class="layui-input-block">
+                        <select name="post">
+                            <option value="医生" selected>医生</option>
+                            <option value="科室主任">科室主任</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item" style="text-align: center">
+                    <span style="color: red; " th:text="${msg}"></span>
+                </div>
+                <div class="layui-form-item">
+                    <span style="float: right"><a href="/">去登录</a></span>
+                </div>
+                <div class="layui-form-item">
+                    <button class="layui-btn layui-btn layui-btn-normal layui-btn-fluid" type="submit" lay-submit="" lay-filter="login">注 册</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="/js/jquery-3.4.1.js"></script>
+<script src="/js/jquery.particleground.min.js"></script>
+<script src="/layui/layui.js"></script>
+<script>
+
+    layui.use(['form'], function () {
+        var form = layui.form,
+        layer = layui.layer;
+
+        // 登录过期的时候，跳出ifram框架
+        // if (top.location != self.location) top.location = self.location;
+
+        form.verify({
+
+            chineseName: function (value) { //最小长度验证
+                var pattern = /[\u4e00-\u9fa5]/;//中文验证
+                var txt = pattern.test(value);
+
+                if (value.length < 2 || !txt) {
+                    return '姓名必须是中文，且至少2个字符';
+                }
+                if(value.length > 8)return "长度必须少于8个字符";
+            },
+
+            password: [/(.+){6,12}$/, '密码必须6到12位'],//密码
+        });
+
+
+        // 粒子线条背景
+        $(document).ready(function(){
+            $('.layui-container').particleground({
+                dotColor:'#7ec7fd',
+                lineColor:'#7ec7fd'
+            });
+        });
+
+
+
+        // 进行登录操作
+        form.on('submit(login)', function (data) {
+            data = data.field;
+            // alert(password +  " " + repassword);
+            if(data.repassword == data.password){
+                if(data.name == ""){
+                    layui.msg("姓名不能为空")
+                    return false;
+                }
+                return true;
+            } else if(data.repassword != data.password){
+                alert("两次输入密码不一致");
+                // layui.msg("两次输入密码不一致");
+                return false;
+            }
+
+            return true;
+        });
+    });
+
+    function check() {
+        var password = document.getElementById("password").value
+        var repassword = document.getElementById("repassword").value
+        if(password != repassword){
+            document.getElementById("incorrect").innerText = "两次密码不一致"
+            return false
+        }else{
+            return true
+        }
+    }
+
+</script>
+</body>
+</html>

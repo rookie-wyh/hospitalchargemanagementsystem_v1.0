@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zzu.hospitalchargemanagementsystem.mapper.PaymentMapper">
+
+
+    <insert id="insertPayment" parameterType="com.zzu.hospitalchargemanagementsystem.model.Payment" useGeneratedKeys="true" keyProperty="id">
+        insert into payment(consult, amount, date, remark) values(#{consult}, #{amount},#{date}, #{remark})
+    </insert>
+
+    <select id="selectPaymentByConsult" resultType="com.zzu.hospitalchargemanagementsystem.model.Payment">
+        select id, consult, amount, date, remark from payment where consult = #{consult} order by date desc
+    </select>
+
+    <select id="selectPaymentById" resultType="com.zzu.hospitalchargemanagementsystem.model.Payment">
+        select id, consult, amount, date, remark from payment where id = #{id}
+    </select>
+
+    <delete id="deletePayment">
+        delete from payment where id = #{id}
+    </delete>
+
+
+</mapper>

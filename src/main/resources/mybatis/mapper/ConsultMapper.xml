@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zzu.hospitalchargemanagementsystem.mapper.ConsultMapper">
+
+
+    <insert id="insertConsult" parameterType="com.zzu.hospitalchargemanagementsystem.model.Consult" useGeneratedKeys="true" keyProperty="id">
+        insert into consult(patient, doctor, diseases, state, result, scheme, cost, balance, date, remark)
+        values(#{patient}, #{doctor},#{diseases},#{state},#{result},#{scheme},#{cost},#{balance},#{date},#{remark})
+    </insert>
+
+    <select id="selectConsultByPatientId" resultType="com.zzu.hospitalchargemanagementsystem.model.Consult">
+        select id, patient, doctor, diseases, state, result, scheme, cost, balance, date, remark from consult where patient = #{patientId} order by date desc
+    </select>
+
+    <select id="selectConsultById" resultType="com.zzu.hospitalchargemanagementsystem.model.Consult">
+        select id, patient, doctor, diseases, state, result, scheme, cost, balance, date, remark from consult where id = #{id}
+    </select>
+
+    <delete id="deleteConsultById">
+        delete from consult where id = #{id}
+    </delete>
+    
+    <update id="updateConsult" parameterType="com.zzu.hospitalchargemanagementsystem.model.Consult">
+        update consult set diseases=#{diseases}, state=#{state}, result=#{result}, scheme=#{scheme}, cost=#{cost}, remark=#{remark} where id=#{id}
+    </update>
+
+
+    <update id="updateConsultBalance">
+        update consult set balance = balance - #{cost} where id=#{consultId}
+    </update>
+
+
+</mapper>

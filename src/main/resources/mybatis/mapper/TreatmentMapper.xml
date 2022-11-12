@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zzu.hospitalchargemanagementsystem.mapper.TreatmentMapper">
+
+
+    <insert id="insertTreatment" parameterType="com.zzu.hospitalchargemanagementsystem.model.Treatment" useGeneratedKeys="true" keyProperty="id">
+        insert into treatment(consult, doctor, project, cost, level, date, timelen, remark)
+        values(#{consult}, #{doctor},#{project},#{cost},#{level},#{date},#{timelen},#{remark})
+    </insert>
+
+    <select id="selectTreatmentByConsultId" resultType="com.zzu.hospitalchargemanagementsystem.model.Treatment">
+        select id, consult, doctor, project, cost, level, date, timelen, remark from treatment where consult = #{consultId} order by date asc;
+    </select>
+
+    <select id="selectTreatmentById" resultType="com.zzu.hospitalchargemanagementsystem.model.Treatment">
+        select id, consult, doctor, project, cost, level, date, timelen, remark from treatment where id = #{id}
+    </select>
+
+    <delete id="deleteTreatmentById">
+        delete from treatment where id = #{id}
+    </delete>
+
+    <update id="updateTreatment" parameterType="com.zzu.hospitalchargemanagementsystem.model.Consult">
+        update treatment set doctor=#{doctor}, project=#{project}, cost=#{cost}, level=#{level}, timelen=#{timelen}, remark=#{remark} where id=#{id}
+    </update>
+
+
+</mapper>

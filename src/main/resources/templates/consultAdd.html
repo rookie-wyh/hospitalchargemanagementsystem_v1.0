@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <style>
+
+    </style>
+</head>
+<body style="width: 100%">
+
+<!--<h1>添加</h1>-->
+<br/>
+<div style="padding: 20px 40px 40px 20px; width: 90%;">
+    <form class="layui-form" action="/consult" method="post">
+        <div class="layui-form-item">
+            <label class="layui-form-label">患者姓名</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" autocomplete="off" class="layui-input" th:value="${patient.name}" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item" style="display: none">
+            <label class="layui-form-label">患者手机号</label>
+            <div class="layui-input-block">
+                <input type="text" name="patient" autocomplete="off" class="layui-input" th:value="${patient.id}" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">病种</label>
+            <div class="layui-input-block">
+                <select name="diseasesSelect">
+                    <span th:each="diseasesName : ${diseases_list}"><option th:value="${diseasesName}" th:text="${diseasesName}"></option></span>
+                </select>
+             </div><br/>
+            <div class="layui-input-block">
+                <input type="text" name="diseases" placeholder="若没有选项 在此处输入" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">状态</label>
+            <div class="layui-input-block">
+                <select name="state">
+                    <option value="门诊">门诊</option>
+                    <option value="住院">住院</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">诊断结果</label>
+            <div class="layui-input-block">
+                <textarea placeholder="请输入内容" class="layui-textarea" name="result"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">治疗方案</label>
+            <div class="layui-input-block">
+                <textarea placeholder="请输入内容" class="layui-textarea" name="scheme"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item" style="display: none">
+            <label class="layui-form-label">初始费用</label>
+            <div class="layui-input-block">
+                <input type="text" name="cost" value="0" autocomplete="off" placeholder="￥" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-block">
+                <textarea placeholder="请输入内容" class="layui-textarea" name="remark"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+
+<script src="/layui/layui.js"></script>
+<script>
+</script>
+</body>
+</html>

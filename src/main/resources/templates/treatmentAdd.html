@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <style>
+
+    </style>
+</head>
+<body style="width: 100%;">
+<div style="padding: 20px 40px 40px 20px; width: 90%;">
+    <form class="layui-form" th:action="'/consult/' + ${consult.id} + '/treatment'" method="post" >
+        <div class="layui-form-item">
+            <label class="layui-form-label">患者姓名</label>
+            <div class="layui-input-block">
+                <input type="text" name="patient" lay-verify="title" autocomplete="off" class="layui-input" th:value="${consult.patientObj.name}" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">医生姓名</label>
+            <div class="layui-input-block">
+                <input type="text" name="doctor" lay-verify="title" autocomplete="off" class="layui-input" th:value="${doctor.name}" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">项目名称</label>
+            <div class="layui-input-block">
+                <select name="projectSelect">
+                    <span th:each="projectName : ${project_list}"><option th:value="${projectName}" th:text="${projectName}"></option></span>
+                </select>
+            </div><br/>
+            <div class="layui-input-block">
+                <input type="text" name="project" placeholder="若没有选项 在此处输入" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">疼痛等级</label>
+            <div class="layui-input-block">
+                <select name="level">
+                    <option value="0" selected>0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">治疗时长</label>
+            <div class="layui-input-block">
+                <input type="text" name="timelen" id="timelen_" lay-verify="number_timelen" placeholder="单位：分钟" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span style="color: red">*&nbsp;</span>治疗费用</label>
+            <div class="layui-input-block">
+                <input type="text" name="cost" id="cost_" lay-verify="number_cost" autocomplete="off" class="layui-input" placeholder="￥">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-block">
+                <textarea placeholder="请输入内容" name="remark" class="layui-textarea"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<script src="/js/jquery-3.4.1.js"></script>
+<script src="/layui/layui.js"></script>
+<script>
+
+    // function to_submit(){
+    //
+    //     var timelen = document.getElementById("timelen_").value;
+    //     var cost = document.getElementById("cost_").value;
+    //     alert(timelen + " + " + cost)
+    //     if (timelen != "") {
+    //         var pattern_timelen = /^\d+$/;
+    //         if (!pattern_timelen.test(timelen)) {
+    //             alert("治疗时长格式输入有误")
+    //             return false
+    //         }
+    //     }
+    //     if (cost != "") {
+    //         var pattern_cost = /^\d+(\.\d+)?$/
+    //         if (!pattern_cost.test(cost)) {
+    //             alert("费用格式输入有误")
+    //             return false
+    //         }
+    //     }
+    //     // alert("添加成功")
+    //     // return true;
+    // }
+
+    layui.use(['form'], function () {
+        var form = layui.form,
+        layer = layui.layer;
+
+        form.on('submit(demo)', function (data) {
+            data = data.field;
+            // alert("submit")
+            if (data.timelen != "") {
+                var pattern = /^\d+$/;
+                if (!pattern.test(data.timelen)) {
+                    alert("治疗时长格式输入有误")
+                    return false
+                }
+            }
+            if (data.cost != "") {
+                var pattern = /^\d+(\.\d+)?$/
+                if (!pattern.test(data.cost)) {
+                    alert("费用格式输入有误")
+                    return false
+                }
+            } else {
+                alert("治疗费用不能为空");
+                return false;
+            }
+
+            return true;
+
+        });
+    });
+
+        // form.verify({
+        //
+        //     number_cost: function (value) {
+        //         var pattern = /^\d+(\.\d+)?$/
+        //         if (!pattern.test(value)) {
+        //             alert("费用格式输入有误")
+        //             return false
+        //         }
+        //     },
+        //
+        //     number_timelen: function (value) {
+        //         var pattern = /^\d+$/;
+        //         if (!pattern.test(value)) {
+        //             alert("治疗时长格式输入有误")
+        //             return false
+        //         }
+        //     }
+        // });
+
+</script>
+</body>
+</html>

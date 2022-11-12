@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <style>
+
+    </style>
+</head>
+<body style="width: 100%;">
+<div style="padding: 20px 40px 40px 20px; width: 90%;">
+    <form class="layui-form" action="#" method="post">
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">医生姓名</label>
+            <div class="layui-input-block">
+                <input type="text" name="doctor" autocomplete="off" class="layui-input" th:value="${treatment.doctorObj.name}" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">项目名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="project" lay-verify="title" autocomplete="off" class="layui-input"
+                       th:value="${treatment.project}"  readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">疼痛等级</label>
+            <div class="layui-input-block">
+                <select name="level" disabled>
+                    <option value="0" th:attr="selected = ( (${treatment.level} == '0')? 'true' : 'false')">0</option>
+                    <option value="1" th:attr="selected = ( (${treatment.level} == '1')? 'true' : 'false')">1</option>
+                    <option value="2" th:attr="selected = ( (${treatment.level} == '2')? 'true' : 'false')">2</option>
+                    <option value="3" th:attr="selected = ( (${treatment.level} == '3')? 'true' : 'false')">3</option>
+                    <option value="4" th:attr="selected = ( (${treatment.level} == '4')? 'true' : 'false')">4</option>
+                    <option value="5" th:attr="selected = ( (${treatment.level} == '5')? 'true' : 'false')">5</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">治疗时长</label>
+            <div class="layui-input-block">
+                <input type="text" name="timelen" autocomplete="off" class="layui-input" th:value="${treatment.timelen}" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">治疗费用</label>
+            <div class="layui-input-block">
+                <input type="text" name="cost" th:value="${treatment.cost}" autocomplete="off" class="layui-input" placeholder="￥" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-block">
+                <textarea placeholder="请输入内容" name="remark" class="layui-textarea" th:text="${treatment.remark}" readonly></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">日期</label>
+            <div class="layui-input-block">
+                <input type="text" name="title" lay-verify="title" autocomplete="off" class="layui-input" th:value="${#dates.format(treatment.date, 'yyyy-MM-dd HH:mm:ss')}" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="submit" class="layui-btn" disabled>不可修改</button>
+                <span>如有错误，请删除记录重新添加</span>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+
+
+
+<script src="/layui/layui.js"></script>
+<script>
+</script>
+</body>
+</html>

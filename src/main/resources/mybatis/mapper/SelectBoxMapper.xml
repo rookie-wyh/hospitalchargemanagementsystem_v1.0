@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zzu.hospitalchargemanagementsystem.mapper.SelectBoxMapper">
+
+
+    <insert id="insertDiseases" parameterType="java.lang.String">
+        insert into diseases(name) values(#{diseases})
+    </insert>
+
+    <select id="selectDiseases" resultType="java.lang.String">
+        select name from diseases
+    </select>
+
+    <insert id="insertProject" parameterType="java.lang.String">
+        insert into project(name) values(#{project})
+    </insert>
+
+    <select id="selectProject" resultType="java.lang.String">
+        select name from project
+    </select>
+
+</mapper>

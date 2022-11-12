@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <style>
+        .consultWithTreatment{
+            border: 1px solid #000;
+        }
+
+        .consultHeader{
+            padding: 0px 0px 0px 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .consultHeader span{
+            display: inline-block;
+            font-weight:bold;
+        }
+
+        .consult{
+            padding: 0px 0px 0px 15px;
+            background-color: #B5FFF8;
+            height: 40px;
+            display: flex;
+            align-items: center;
+        }
+        .consult span{
+            display: inline-block;
+        }
+
+        .treatmentContent{
+            margin-left: 50px;
+            margin-right: 50px;
+        }
+
+        .treatmentContent table th{
+            width: 100px;
+            height: 35px;
+        }
+        .treatmentContent table td{
+            width: 100px;
+            height: 30px;
+        }
+        .consultHeader{
+            height: 35px;
+            background-color:  #d2d2d2;
+        }
+        .odd{
+            background-color:  #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<button type="button" class="layui-btn" th:onclick="addConsult([[${patient.id}]])">+新增</button>
+<!--<a href="#" th:onclick="addConsult([[${patient.id}]])">添加门诊记录</a>-->
+<div id="addConsult" style="display: none"></div>
+<div id="addTreatment" style="display: none"></div>
+<div id="updateConsult" style="display: none"></div>
+<div id="showTreatment" style="display: none"></div>
+<div id="addPayment" style="display: none"></div>
+<div id="showPayment" style="display: none"></div>
+<br/>
+<div class="patient" style="display: inline-block">
+    <label>全部门诊记录</label>&nbsp;&nbsp;
+    <label>姓名：</label><span th:text="${patient.name}" style="width: 100px"></span>
+    <label>手机号：</label><span th:text="${patient.id}" style="width: 100px"></span>
+    <label>年龄：</label><span th:text="${patient.age}" style="width: 100px"></span>
+    <label>性别：</label><span th:text="${patient.gender}" style="width: 100px"></span>
+    <label>备注：</label><span th:text="${patient.remark}"></span>
+</div>
+<br/>
+
+<div class="data">
+    <div class="consultHeader">
+        <span style="width: 50px">序号</span>
+        <span style="width: 90px">日期</span>
+        <span style="width: 75px">姓名</span>
+        <span style="width: 75px">医生</span>
+        <span style="width: 60px">状态</span>
+        <span style="width: 120px">病种</span>
+        <span style="width: 200px">诊断结果</span>
+        <span style="width: 200px">治疗方案</span>
+        <span style="width: 100px">缴费信息</span>
+        <span style="width: 60px" id="balance">余额</span>
+        <span style="width: 150px">备注</span>
+        <span>操作</span>
+    </div>
+    <div th:if="${consults.getList().isEmpty()}" style="text-align: center;"><span style="font-size: large">没有数据!</span></div>
+    <div th:each="consult, consultIterStat : ${consults.getList()}" class="consultWithTreatment">
+        <div class="consult">
+            <span th:text="${(consults.getPageNum() - 1) * consults.getPageSize() + consultIterStat.count}" style="width: 50px"></span>
+            <span th:text="${#dates.format(consult.date, 'yyyy-MM-dd')}" style="width: 90px"></span>
+            <span th:text="${consult.patientObj.name.length() > 10 ? consult.patientObj.name.substring(0, 11) + '...' : consult.patientObj.name}" style="width: 75px"></span>
+            <span th:text="${consult.doctorObj.name.length() > 10 ? consult.doctorObj.name.substring(0, 11) + '...' : consult.doctorObj.name}" style="width: 75px"></span>
+            <span th:text="${consult.state}" style="width: 60px"></span>
+            <span th:text="${consult.diseases.length() > 10 ? consult.diseases.substring(0, 10) + '...' : consult.diseases}" style="width: 120px"></span>
+            <span th:text="${consult.result.length() > 12 ? consult.result.substring(0, 12) + '...' : consult.result}" style="width: 200px"></span>
+            <span th:text="${consult.scheme.length() > 12 ? consult.scheme.substring(0, 12) + '...' : consult.scheme}" style="width: 200px"></span>
+            <span style="width: 100px">
+                <a href="#" th:onclick="'addPayment('+ ${consult.id} + ')'">添加</a>&nbsp;
+                <a href="#" th:onclick="'showPayment('+ ${consult.id} + ')'">查看</a>
+            </span>
+            <span th:if="${consult.state} == '已出院'">
+                <span style="width: 60px;"></span>
+            </span>
+            <span th:if="${consult.state} != '已出院'">
+                <span th:text="${consult.balance}" style="width: 60px" ></span>
+            </span>
+            <span th:text="${consult.remark.length() > 8 ? consult.remark.substring(0, 8) + '...' : consult.remark}" style="width: 150px"></span>
+            <span><a href="#" th:onclick="'updateConsult(' + ${consult.id} + ')'">详情</a></span>&nbsp;&nbsp;
+            <span><a href="#" onclick="todel_consult()">删除</a></span>&nbsp;&nbsp;
+            <span style="display: none">
+                <form method="post" th:action="'/consult/' + ${consult.id}" style="display: inline">
+                    <input type="hidden" value="delete" name="_method" />
+                    <input type="submit" value="删除" id="del_consult" onclick="return confirmDelete()">
+                </form>
+            </span>
+            <span><a href="#" th:onclick="'showTreatment('+${consultIterStat.count} + ','+ ${consults.getList().size()} + ')'" ><i class="layui-icon layui-icon-up" th:id="'showTreatment_'+${consultIterStat.count}"></i></a></span>
+        </div>
+        <hr/>
+        <div th:id="'consult_'+${consultIterStat.count}" style="display: none" class="treatmentContent treatment">
+            <table>
+                <tr>
+                    <th style="width: 50px">序号</th>
+                    <th style="width: 150px">日期</th>
+                    <th style="width: 112px">医生</th>
+                    <th style="width: 200px">治疗项目</th>
+                    <th>疼痛等级</th>
+                    <th>时长</th>
+                    <th>费用</th>
+                    <th style="width: 240px">备注</th>
+                    <th>操作</th>
+                </tr>
+                <tr th:each="treatment, treatmentIterStat: ${consult.treatments}" style="text-align: center" th:class="${treatmentIterStat.odd}? 'odd':'even'">
+                    <td th:text="${treatmentIterStat.count}"></td>
+                    <td th:text="${#dates.format(treatment.date, 'yyyy-MM-dd HH:mm')}" ></td>
+                    <td th:text="${treatment.doctorObj.name}"></td>
+                    <td th:text="${treatment.project.length() > 16 ? treatment.project.substring(0, 16) + '...' : treatment.project}" ></td>
+                    <td th:text="${treatment.level}"></td>
+                    <td th:text="${treatment.timelen}"></td>
+                    <td th:text="${treatment.cost}"></td>
+                    <td th:text="${treatment.remark.length() > 16 ? treatment.remark.substring(0, 16) + '...' : treatment.remark}"></td>
+                    <td>
+                        <span><a href="#" th:onclick="'updateTreatment(' + ${treatment.id} + ')'">详情</a></span>&nbsp;&nbsp;
+                        <span><a href="#" onclick="todel_treatment()">删除</a></span>
+                        <span style="display: none">
+                            <form method="post" th:action="'/consult/' + ${consult.id} + '/treatment/' + ${treatment.id}" style="display: inline">
+                                <input type="hidden" value="delete" name="_method" />
+                                <input type="submit" value="删除" id="del_treatment" onclick="return confirmDelete()">
+                            </form>
+                        </span>
+                    </td>
+                </tr>
+            </table>
+            <div style="width: 100%; ">
+                <button type="button" class="layui-btn layui-btn-fluid" style=" background-color: #cccccc" th:onclick="'addTreatment(' + ${consult.id} + ')'"><span style="color: #000000;" >+新增治疗</span></button>
+            </div>
+        </div>
+        <br/>
+    </div>
+</div>
+
+<div class="page" style="width: 100%; text-align: center"><br/>
+    <a th:href="'/consult/patient='+ ${patient.id} + '/page=1'">首页</a>
+    <a th:href="'/consult/patient='+ ${patient.id} + '/page=' + ${consults.getPrePage()}" th:if="${consults.getPageNum()} gt 1">上一页</a>
+    <span th:text="${consults.getPageNum()} + '/' + ${consults.getPages()}"></span>
+    <a th:href="'/consult/patient='+ ${patient.id} + '/page=' + ${consults.getNextPage()}" th:if="${consults.getPageNum()} lt ${consults.getPages()}">下一页</a>
+    <a th:href="'/consult/patient='+ ${patient.id} + '/page=' + ${consults.getPages()}">末页</a>
+
+</div>
+
+<script src="/js/jquery-3.4.1.js"></script>
+<script src="/layui/layui.js"></script>
+<script>
+
+    // function showBalanceTips() {
+    //     layer.tips('tip: 已出院状态下不显示余额', '#balance',{
+    //         tips: [1, 'black'],
+    //         time: 4000
+    //     })
+    // }
+
+    function todel_consult() {
+        $("#del_consult").click()
+    }
+
+    function todel_treatment() {
+        $("#del_treatment").click()
+    }
+
+    function addPayment(id) {
+        $("#addPayment").load("/toaddpayment/"+id, function () {
+            layer.open({
+                type: 1,
+                title: "新增缴费",
+                move:false,//禁止点击标题拖动
+                skin: 'layui-layer-rim', //加上边框
+                area: ['500px', '420px'], //宽高
+                content: $("#addPayment").html()
+            });
+        });
+    }
+
+    function showPayment(id) {
+        $("#showPayment").load("/payment/"+id, function () {
+            layer.open({
+                type: 1,
+                title: "缴费记录",
+                move:false,//禁止点击标题拖动
+                skin: 'layui-layer-rim', //加上边框
+                area: ['500px', '420px'], //宽高
+                content: $("#showPayment").html()
+            });
+        });
+    }
+
+    function updateConsult(id) {
+        $("#updateConsult").load("/toupdateconsult/"+id, function () {
+            layer.open({
+                type: 1,
+                title: "诊断记录",
+                move:false,//禁止点击标题拖动
+                skin: 'layui-layer-rim', //加上边框
+                area: ['650px', '550px'], //宽高
+                content: $("#updateConsult").html()
+            });
+        });
+    }
+
+    function addConsult(id) {
+        $("#addConsult").load("/toaddconsult/patient="+id, function () {
+            layer.open({
+                type: 1,
+                title: "新增诊断记录",
+                move:false,//禁止点击标题拖动
+                skin: 'layui-layer-rim', //加上边框
+                area: ['650px', '550px'], //宽高
+                content: $("#addConsult").html()
+            });
+        });
+    }
+
+    function addTreatment(consultId) {
+        $("#addTreatment").load("/consult/" + consultId + "/treatment", function () {
+            layer.open({
+                type: 1,
+                title: "新增治疗记录",
+                move:false,//禁止点击标题拖动
+                skin: 'layui-layer-rim', //加上边框
+                area: ['650px', '550px'], //宽高
+                content: $("#addTreatment").html()
+            });
+        });
+    }
+
+    function updateTreatment(id) {
+        $("#showTreatment").load("/treatment/" + id, function () {
+            layer.open({
+                type: 1,
+                title: "治疗记录",
+                move:false,//禁止点击标题拖动
+                skin: 'layui-layer-rim', //加上边框
+                area: ['650px', '550px'], //宽高
+                content: $("#showTreatment").html()
+            });
+        });
+    }
+
+    var arr = null;
+    function showTreatment(id, size) {
+        if(this.arr == null || this.arr.length <= size) {
+            this.arr = Array(size + 1).fill(1);
+        }
+        if(this.arr[id] % 2 == 0) {
+            document.getElementById("consult_"+id).style.display = "none";
+            // document.getElementById("showTreatment_"+id).text = "展开";
+            document.getElementById("showTreatment_"+id).setAttribute("class", "layui-icon layui-icon-up");
+            this.arr[id] += 1;
+        } else{
+            document.getElementById("consult_"+id).style.display = "block";
+            // document.getElementById("showTreatment_"+id).text = "收起";
+            document.getElementById("showTreatment_"+id).setAttribute("class", "layui-icon layui-icon-down");
+            this.arr[id] -= 1;
+        }
+    }
+
+    function confirmDelete() {
+        if(confirm("确认删除吗") == true){
+            if(confirm("重复确认删除") == true){
+                alert("删除成功");
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
+</script>
+</body>
+</html>

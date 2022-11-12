@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <style>
+        table td{
+            width: 80px;
+        }
+        .odd{
+            background-color: white;
+        }
+        .even{
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+
+
+<table style="margin: 0 auto; text-align: center">
+    <tr style="height: 35px; background-color: #dedede">
+        <th>序号</th>
+        <th>时间</th>
+        <th>金额</th>
+        <th>备注</th>
+        <th>操作</th>
+    </tr>
+    <tr th:each="payment, paymentStat : ${payments}" style="height: 40px" th:class="${paymentStat.odd} ? 'odd':'even'">
+        <td th:text="${payments.size() - paymentStat.index}"></td>
+        <td th:text="${#dates.format(payment.date, 'yyyy-MM-dd HH:mm:ss')}"></td>
+        <td th:text="${payment.amount}"></td>
+        <td th:text="${payment.remark}"></td>
+        <td><a th:href="'/delpayment/'+ ${payment.id}" onclick="return confirmDelete()">删除</a></td>
+    </tr>
+
+</table>
+
+<script src="/layui/layui.js"></script>
+<script>
+
+    function confirmDelete() {
+        if(confirm("确认删除吗") == true){
+            if(confirm("重复确认删除") == true){
+                alert("删除成功");
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
+</script>
+</body>
+</html>

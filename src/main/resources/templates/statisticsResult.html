@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>home</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <style>
+        table th{
+            width: 100px;
+        }
+        table tr{
+            height: 30px;
+        }
+        .even{
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body style="width: 100%">
+<div id="detail" style="display: none"></div>
+<h2>统计结果</h2><br/>
+
+<form class="layui-form" action="/statistics" method="post">
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">日期范围</label>
+            <div class="layui-input-inline" style="width: 120px;">
+                <input type="text" name="from" id="from" lay-verify="date" placeholder="yyyy-MM-dd" th:value="${from}" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid">-</div>
+            <div class="layui-input-inline" style="width: 120px;">
+                <input type="text" name="to" id="to" lay-verify="date" placeholder="yyyy-MM-dd" th:value="${to}" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline"  style="width: 100px">
+            <div class="layui-input-inline">
+                <button type="submit" class="layui-btn">搜索</button>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+<p>科室统计数据</p>
+
+<div>
+    <table style="width: 60%; margin: 0 auto; text-align: center">
+        <tr  style="height: 35px; background-color: #dedede">
+            <th>问诊人数</th>
+            <th>问诊人次</th>
+            <th>治疗人数</th>
+            <th>治疗人次</th>
+            <th>治疗总费用</th>
+        </tr>
+        <tr>
+            <td th:text="${statisticsTotal.consultPatientNum}"></td>
+            <td th:text="${statisticsTotal.consultPatientCount}"></td>
+            <td th:text="${statisticsTotal.treatmentPatientNum}"></td>
+            <td th:text="${statisticsTotal.treatmentPatientCount}"></td>
+            <td th:text="${statisticsTotal.treatmentTotalCost}"></td>
+        </tr>
+    </table>
+    <!--<p>问诊人数：<span th:text="${statisticsTotal.consultPatientNum}"></span></p>-->
+    <!--<p>问诊人次：<span th:text="${statisticsTotal.consultPatientCount}"></span></p>-->
+
+    <!--<p>治疗人数：<span th:text="${statisticsTotal.treatmentPatientNum}"></span></p>-->
+    <!--<p>治疗人次：<span th:text="${statisticsTotal.treatmentPatientCount}"></span></p>-->
+
+    <!--<p>治疗总费用：<span th:text="'￥'${statisticsTotal.treatmentTotalCost}"></span></p>-->
+</div>
+<hr/>
+<p>各医生统计数据</p>
+<div>
+    <table style="width: 60%; margin: 0 auto; text-align: center">
+        <tr style="height: 35px; background-color: #dedede">
+            <th>序号</th>
+            <th>手机号</th>
+            <th>姓名</th>
+            <th>性别</th>
+            <th>治疗人数</th>
+            <th>治疗人次</th>
+            <th>治疗总费用</th>
+            <th>操作</th>
+        </tr>
+        <tr th:each="doctor, iterStat: ${statisticsPerDoctor}" th:class="${iterStat.odd} ? 'odd':'even'">
+            <td th:text="${iterStat.count}"></td>
+            <td th:text="${doctor.id}"></td>
+            <td th:text="${doctor.name}"></td>
+            <td th:text="${doctor.gender}"></td>
+            <td th:text="${doctor.statistics.treatmentPatientNum}"></td>
+            <td th:text="${doctor.statistics.treatmentPatientCount}"></td>
+            <td th:text="${doctor.statistics.treatmentTotalCost}"></td>
+            <td><a href="#" th:onclick="detail([[${doctor.id}]]);">详情</a></td>
+        </tr>
+    </table>
+</div>
+<script src="/js/jquery-3.4.1.js"></script>
+<script src="/layui/layui.js"></script>
+<script>
+
+    function detail(id) {
+        //页面层
+        var from = $("#from").val();
+        var to = $("#to").val();
+        // alert(from + " " + to);
+        $("#detail").load("/statistics/detail/doctor="+id + "&from="+from + "&to="+to, function () {
+            layer.open({
+                type: 1,
+                title: "详情",
+                move:false,//禁止点击标题拖动
+                skin: 'layui-layer-rim', //加上边框
+                area: ['600px', '500px'], //宽高
+                content: $("#detail").html()
+            });
+        });
+    }
+
+    layui.use(['form', 'util', 'laydate'], function() {
+        var form = layui.form;
+        var layer = layui.layer;
+        var util = layui.util;
+        var laydate = layui.laydate;
+
+        //日期
+        laydate.render({
+            elem: '#from'
+        });
+        laydate.render({
+            elem: '#to'
+        });
+    });
+</script>
+</body>
+</html>

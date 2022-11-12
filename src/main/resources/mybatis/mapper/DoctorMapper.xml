@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zzu.hospitalchargemanagementsystem.mapper.DoctorMapper">
+
+    <select id="seletDoctorById" resultType="com.zzu.hospitalchargemanagementsystem.model.Doctor">
+        select id, password, name, post, gender from doctor where id = #{id}
+    </select>
+
+    <select id="selectAllDoctor" resultType="com.zzu.hospitalchargemanagementsystem.model.Doctor">
+        select id, name, post, gender from doctor
+    </select>
+
+    <insert id="insertDoctor" parameterType="com.zzu.hospitalchargemanagementsystem.model.Doctor">
+        insert into doctor(id, password, name, post, gender) values(#{id},#{password},#{name},#{post},#{gender})
+    </insert>
+
+    <update id="updateDoctor" parameterType="com.zzu.hospitalchargemanagementsystem.model.Doctor">
+        update doctor set name = #{name}, post = #{post}, gender = #{gender} where id = #{id}
+    </update>
+
+
+    <update id="resetPassword">
+        update doctor set password = #{password} where id = #{id}
+    </update>
+
+</mapper>

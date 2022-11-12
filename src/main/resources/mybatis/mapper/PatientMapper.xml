@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zzu.hospitalchargemanagementsystem.mapper.PatientMapper">
+
+    <insert id="insertPatient" parameterType="com.zzu.hospitalchargemanagementsystem.model.Patient">
+        insert into patient(id, name, year, gender, visitedtime, remark) values(#{id}, #{name}, #{year}, #{gender}, #{visitedtime}, #{remark});
+    </insert>
+
+    <update id="updatePatient" parameterType="com.zzu.hospitalchargemanagementsystem.model.Patient">
+        update patient set name = #{name}, gender = #{gender}, year = #{year}, visitedtime = #{visitedtime}, remark=#{remark}  where id = #{id}
+    </update>
+
+    <select id="selectPatientById" resultType="com.zzu.hospitalchargemanagementsystem.model.Patient">
+        select id, name, year, gender, remark from patient where id = #{id}
+    </select>
+
+    <select id="selectPatientByName" resultType="com.zzu.hospitalchargemanagementsystem.model.Patient">
+        select id, name, year, gender, remark from patient where name = #{name}
+    </select>
+
+    <select id="selectPatients" resultType="com.zzu.hospitalchargemanagementsystem.model.Patient">
+        select id, name, year, gender, remark from patient order by visitedtime desc
+    </select>
+
+    <select id="selectPatientsByDiseases" resultType="com.zzu.hospitalchargemanagementsystem.model.Patient">
+        select id, name, year, gender, remark from patient where id in (select patient from consult where diseases = #{diseases}) order by visitedtime desc
+    </select>
+
+
+
+    <select id="selectPatientsByIdList" resultType="com.zzu.hospitalchargemanagementsystem.model.Patient">
+        select id, name, year, gender, remark from patient where id in
+        <foreach collection="patients" item="pid" open="(" close=")" separator="," >
+            #{pid}
+        </foreach>
+        order by visitedtime desc
+    </select>
+
+
+    <select id="selectPatientIdWithConsultDoctor" resultType="java.lang.String">
+        select distinct patient from consult where consult.doctor = #{doctor}
+    </select>
+
+    <select id="selectPatientIdWithTreatmentDoctor" resultType="java.lang.String">
+        select distinct patient from consult inner join treatment on treatment.consult = consult.id where treatment.doctor = #{doctor};
+    </select>
+
+    <delete id="deletePatientById">
+        delete from patient where id = #{id}
+    </delete>
+
+
+</mapper>

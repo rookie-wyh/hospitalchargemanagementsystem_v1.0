@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <style>
+
+    </style>
+</head>
+<body style="width: 100%;">
+
+
+<div style="padding: 20px 40px 40px 20px; width: 90%;">
+    <form class="layui-form" action="/payment" method="post">
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">患者姓名</label>
+            <div class="layui-input-block">
+                <input type="text" name="patientName" autocomplete="off" class="layui-input" th:value="${patient.name}" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">手机号</label>
+            <div class="layui-input-block">
+                <input type="text" name="id" lay-verify="title" autocomplete="off" th:value="${patient.id}"
+class="layui-input" readonly>
+            </div>
+        </div>
+        <input type="hidden" name="consult" autocomplete="off" class="layui-input" th:value="${consult}">
+        <div class="layui-form-item">
+            <label class="layui-form-label">缴费金额</label>
+            <div class="layui-input-block">
+                <input type="text" name="amount" autocomplete="off" class="layui-input" placeholder="￥" required>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-block">
+                <textarea placeholder="请输入内容" name="remark" class="layui-textarea"></textarea>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<script src="/layui/layui.js"></script>
+<script>
+    layui.use(['form'], function () {
+        var form = layui.form,
+            layer = layui.layer;
+
+        form.on('submit(demo)', function (data) {
+            data = data.field;
+            // alert("submit")
+            if (data.amount != "") {
+                var pattern = /^\d+(\.\d+)?$/
+                if (!pattern.test(data.amount)) {
+                    alert("缴费金额格式输入有误")
+                    return false
+                }
+            } else {
+                alert("缴费金额不能为空")
+                return false;
+            }
+            // alert("缴费成功，金额为 " + data.amount + " 元")
+            return true;
+        });
+    });
+</script>
+</body>
+</html>

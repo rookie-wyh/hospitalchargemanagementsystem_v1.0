@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>patientProfile</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+</head>
+<body style="height: 100%; width: 100%">
+<div style="padding: 20px 20px 20px auto;width: 90%;">
+    <h2>添加病人信息</h2><br/>
+    <form action="/patient" method="post" onsubmit="return msg()" class="layui-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">手机号</label>
+            <div class="layui-input-block">
+                <input type="text" name="id" id="id" lay-verify="phone" autocomplete="off" placeholder="请输入手机号" class="layui-input" required onblur="patient_exist()" onfocus="tip_clear()">
+
+            </div>
+        </div>
+
+        <div class="" style="height: 20px;">
+            <label class="layui-form-label"></label>
+            <div class="" style="height: 20px">
+                <span id="tip" style="color: dodgerblue"></span>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">姓名</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" lay-verify="chineseName" autocomplete="off" placeholder="请输入姓名" class="layui-input" required>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">年龄</label>
+            <div class="layui-input-block">
+                <input type="text" name="age" lay-verify="age" value="1" autocomplete="off" placeholder="请输入年龄" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">性别</label>
+            <div class="layui-input-block">
+                <select name="gender">
+                    <option value="男">男</option>
+                    <option value="女">女</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-block">
+                <textarea placeholder="请输入内容" class="layui-textarea" name="remark"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script src="/js/jquery-3.4.1.js"></script>
+<script src="/layui/layui.js"></script>
+<script>
+
+    var exist = false;
+
+    function tip_clear() {
+        $("#tip").html("")
+    }
+
+    function patient_exist() {
+        if($('#id').val() != ""){
+            $.get("/patient_exist/"+$('#id').val(), null, function (data) {
+                var res= $.parseJSON(data)
+                if(res.code == 1){
+                    // alert("exist");
+                    var url = '/consult/patient='+ res.id + '/page=1';
+                    $("#tip").html("该手机号已注册, <a href=" + url + ">点击查看详情</a>" )
+                    exist = true;
+                }else{
+                    // alert("not exist");
+                    exist = false;
+                    return false
+                }
+            });
+            return exist;
+        }else{
+            return true;
+        }
+
+    }
+
+
+    function msg() {
+        // alert(patient_exist())
+        if(!patient_exist()){
+            alert("保存成功")
+            return true
+        }else{
+            alert("该手机号已注册")
+            return false;
+        }
+    }
+
+    layui.use(['form'], function () {
+        var form = layui.form,
+            layer = layui.layer;
+
+        form.verify({
+
+            chineseName: function (value) { //最小长度验证
+                var pattern = /[\u4e00-\u9fa5]/;//中文验证
+                var txt = pattern.test(value);
+
+                if (value.length < 2 || value.length > 8 || !txt) {
+                    return '姓名必须是中文，且长度为2 - 8个字符';
+                }
+            },
+
+            age : function (value) {
+                var p1 = /^\d{1,3}$/
+                var p2  =  /^\+?[1-9][0-9]*$/
+                if(!p1.test(value) || !p2.test(value) || value > 120){
+                    return "年龄输入有误，范围为 1 - 120";
+                }
+            }
+        });
+
+        // form.on('submit(demo)', function (data) {
+        //     data = data.field;
+        //     // alert("submit")
+        //     if(!patient_exist()){
+        //         alert("保存成功")
+        //         return true
+        //     }else{
+        //         alert("该手机号已注册")
+        //         return false;
+        //     }
+        // });
+    })
+</script>
+</body>
+</html>
