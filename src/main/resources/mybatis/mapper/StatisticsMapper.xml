@@ -66,11 +66,11 @@
 
     <!--最近一个医生门诊的一个治疗的病人-->
     <select id="selectTreatmentDiseasesCountInDatePerDoctor" resultType="java.lang.Integer">
-        select count(1) from treatment where consult in (select id from consult where doctor = #{doctor} and diseases = #{diseases} and date between #{from} and #{to})
+        select count(1) from treatment where consult in (select id from consult where doctor = #{doctor} and diseases = #{diseases}) and date between #{from} and #{to}
     </select>
 
     <!--最近一个医生治疗的一个病种的收费-->
     <select id="selectCostDiseasesInDatePerDoctor" resultType="java.lang.Float">
-        select ifnull(sum(cost), 0) from treatment where consult in (select id from consult where doctor = #{doctor} and diseases = #{diseases} and date between #{from} and #{to})
+        select ifnull(sum(cost), 0) from treatment where consult in (select id from consult where doctor = #{doctor} and diseases = #{diseases}) and date between #{from} and #{to}
     </select>
 </mapper>
